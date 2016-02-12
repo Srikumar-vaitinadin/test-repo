@@ -19,7 +19,11 @@
         "type": "Microsoft.Compute.UserNameTextBox",
         "label": "Username",
         "toolTip": "Admin username for the virtual machines. Same Credientials is to SSH to the box.",
-        "osPlatform": "Linux"
+        "osPlatform": "Linux",
+        "constraints": {
+                    "required": true,
+                    "validationMessage": "Valid username is required"
+                  }
       },
       {
                 "name": "sshPublicKey",
