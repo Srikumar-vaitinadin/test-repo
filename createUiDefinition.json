@@ -1,0 +1,230 @@
+{
+  "handler": "Microsoft.Compute.MultiVm",
+  "version": "0.0.1-preview",
+  "parameters": {
+    "basics": [
+      {
+        "name": "VMName",
+        "type": "Microsoft.Common.TextBox",
+        "label": "VM name",
+        "toolTip": "The name of the new SaamaPEA VM.",
+        "constraints": {
+          "required": true,
+          "regex": "^[a-z0-9]{3,24}$",
+          "validationMessage": "Cluster names must be between 3 and 24 characters long, and can contain only numbers and lowercase letters."
+        }
+      },
+      {
+        "name": "adminUsername",
+        "type": "Microsoft.Compute.UserNameTextBox",
+        "label": "Username",
+        "toolTip": "Admin username for the virtual machines. Same Credientials is to SSH to the box.",
+        "osPlatform": "Linux"
+      },
+      {
+                "name": "sshPublicKey",
+                "type": "Microsoft.Common.TextBox",
+                "label": "SSH public key",
+                "toolTip": "OpenSSH public key can be generated with tools like ssh-keygen on Linux or OS X and will look like 'ssh-rsa AAAAB3...'",
+                "constraints": {
+                    "required": true,
+                    "validationMessage": "Valid SSH Public Key is required"
+                  }
+        },
+      {
+        "name": "passwordElement",
+        "type": "Microsoft.Compute.CredentialsCombo",
+        "label": {
+          "authenticationType": "Authentication type",
+          "password": "Password",
+          "confirmPassword": "Confirm password",
+          "sshPublicKey": "SSH public key"
+        },
+        "toolTip": {
+          "authenticationType": "",
+          "password": "",
+          "sshPublicKey": ""
+        },
+        "constraints": {
+          "required": true
+        },
+        "options": {
+          "hideConfirmation": false
+        },
+        "osPlatform": "Linux"
+      }
+    ],
+    "steps": [
+      {
+        "name": "StorageNetworkConfig",
+        "label": "Network and Storage Settings",
+        "subLabel": {
+          "preValidation": "Configure the network and storage options",
+          "postValidation": "Done"
+        },
+        "bladeTitle": "Network and Storage Settings",
+        "elements": [
+          {
+            "name": "virtualNetwork",
+            "type": "Microsoft.Network.VirtualNetworkCombo",
+            "label": {
+              "virtualNetwork": "Virtual network",
+              "subnets": "Subnets"
+            },
+            "toolTip": {
+              "virtualNetwork": "Virtual Network Name",
+              "subnets": "Subnets requied for the SaamaPEA solution"
+            },
+            "defaultValue": {
+              "name": "SaamaPEAwebProtectedVNet",
+              "addressPrefixSize": "/16"
+            },
+            "options": {
+              "hideExisting": true
+            },
+             "constraints": {
+                    "minAddressPrefixSize": "/16"
+            },
+    "subnets": {
+              "subnet1": {
+                "label": "Subnet",
+                "defaultValue": {
+                  "name": "Subnet",
+                  "addressPrefixSize": "/24"
+                },
+                "constraints": {
+                  "minAddressPrefixSize": "/24",
+                  "requireContiguousAddresses": false
+                }
+              }
+            }
+          },
+          {
+            "name": "vmSize",
+            "type": "Microsoft.Compute.SizeSelector",
+            "label": "Virtual machine size",
+            "toolTip": "The size of virtual machine to provision.",
+            "recommendedSizes": [
+              "Standard_D3",
+              "Standard_D3_v2",
+              "Standard_D4"
+            ],
+            "constraints": {
+              "allowedSizes": [
+                "Standard_A3",
+                "Standard_A4",
+                "Standard_D2",
+                "Standard_D3",
+                "Standard_D4",
+                "Standard_D2_v2",
+                "Standard_D3_v2",
+                "Standard_D4_v2"
+              ],
+              "required": true
+            },
+            "osPlatform": "Linux",
+            "imageReference": {
+              "publisher": "saama",
+              "offer": "fluidanalyticsengine",
+              "sku": "PATIENTEXPERIENCE"
+            },
+            "count": "1"
+          },
+          {
+            "name": "storageAccount",
+            "type": "Microsoft.Storage.StorageAccountSelector",
+            "label": "Storage Account",
+            "toolTip": "Storage Account for the disk drive of the Virtual SaamaPEA.",
+            "defaultValue": {
+              "type": "Standard_LRS"
+            },
+            "constraints": {
+              "allowedTypes": [
+                "Standard_LRS",
+                "Standard_GRS"
+              ],
+              "required": true
+            },
+            "options": {
+              "hideExisting": true
+            }
+          }
+        ]
+      },
+      {
+        "name": "IPConfig",
+        "label": "SaamaPEA IP Address Assignments",
+        "subLabel": {
+          "preValidation": "Configure the Public IP and the IP Addresses for each NIC on the SaamaPEA",
+          "postValidation": "Done"
+        },
+        "bladeTitle": "IP Assignment",
+        "elements": [
+          {
+            "name": "publicIpAddress",
+            "type": "Microsoft.Network.PublicIpAddressCombo",
+            "label": {
+              "publicIpAddress": "Public IP address name",
+              "domainNameLabel": "Domain name label"
+            },
+            "toolTip": {
+              "publicIpAddress": "Name of the public IP address object",
+              "domainNameLabel": "DNS prefix to use for the public IP address (e.g. [dnsPrefix].region.cloudapp.azure.com)"
+            },
+            "defaultValue": {
+              "publicIpAddressName": "publicip-SaamaPEA",
+              "domainNameLabel": "[basics('vmName')]"
+            },
+            "options": {
+              "hideNone": false,
+              "hideDomainNameLabel": false,
+              "hideExisting": true
+            },
+            "constraints": {
+              "required": {
+                "domainNameLabel": true
+              }
+            }
+          },
+          {
+            "name": "publicIPAddressTypeElement",
+            "type": "Microsoft.Common.OptionsGroup",
+            "label": "Public IP Address Type",
+            "toolTip": "",
+            "defaultValue": "Static",
+            "constraints": {
+              "allowedValues": [
+                {
+                  "label": "Static",
+                  "value": "Static"
+                },
+                {
+                  "label": "Dynamic",
+                  "value": "Dynamic"
+                }
+              ],
+              "required": true
+            }
+          }
+        ]
+      }
+    ],
+    "outputs": {
+      "vmName": "[basics('VMName')]",
+      "adminUsername": "[basics('adminUsername')]",
+      "sshKeyData": "[basics('sshPublicKey')]",
+      "adminPassword": "[basics('passwordElement')]",
+      "virtualNetworkName": "[steps('StorageNetworkConfig').virtualNetwork.name]",
+      "subnetName": "[steps('StorageNetworkConfig').virtualNetwork.subnets.subnet1.name]",
+      "subnetPrefix": "[steps('StorageNetworkConfig').virtualNetwork.subnets.subnet1.addressPrefix]",
+      "addressPrefix": "[steps('StorageNetworkConfig').virtualNetwork.addressPrefix]",
+      "vmSize": "[steps('StorageNetworkConfig').vmSize]",
+      "storageAccountName": "[steps('StorageNetworkConfig').storageAccount.name]",
+      "storageAccountType": "[steps('StorageNetworkConfig').storageAccount.type]",
+      "publicIPAddressName": "[steps('IPConfig').publicIpAddress.name]",
+      "publicIPAddressType": "[steps('IPConfig').publicIPAddressTypeElement]",
+      "dnsLabelPrefix": "[steps('IPConfig').publicIpAddress.domainNameLabel]",
+      "location": "[location()]"
+    }
+  }
+}
