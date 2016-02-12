@@ -59,29 +59,30 @@
             },
             "defaultValue": {
               "name": "SaamaPEAwebProtectedVNet",
-              "addressPrefixSize": "/16"
+              "addressPrefixSize": "/24"
             },
             "options": {
               "hideExisting": true
             },
-             "constraints": {
-                    "minAddressPrefixSize": "/16"
+            "constraints": {
+                "minAddressPrefixSize": "/24"
             },
             "subnets": {
-              "subnet1": {
-                "label": "Subnet",
-                "defaultValue": {
-                  "name": "Subnet",
-                  "addressPrefixSize": "/24"
-                },
-                "constraints": {
-                  "minAddressPrefixSize": "/24",
-                  "requireContiguousAddresses": false
-                }
-              }
-            }
-          },
-          {
+                   "subnet1": {
+                            "label": "Subnet",
+                            "defaultValue": {
+                            "name": "Subnet",
+                            "addressPrefixSize": "/24"
+                            },
+                            "constraints": {
+                            "minAddressPrefixSize": "/24",
+                            "minAddressCount": 12,
+                            "requireContiguousAddresses": false
+                            }
+                        }
+                      }
+                    },
+            {
             "name": "vmSize",
             "type": "Microsoft.Compute.SizeSelector",
             "label": "Virtual machine size",
