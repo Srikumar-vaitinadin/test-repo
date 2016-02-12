@@ -30,29 +30,7 @@
                     "required": true,
                     "validationMessage": "Valid SSH Public Key is required"
                   }
-        },
-      {
-        "name": "passwordElement",
-        "type": "Microsoft.Compute.CredentialsCombo",
-        "label": {
-          "authenticationType": "Authentication type",
-          "password": "Password",
-          "confirmPassword": "Confirm password",
-          "sshPublicKey": "SSH public key"
-        },
-        "toolTip": {
-          "authenticationType": "",
-          "password": "",
-          "sshPublicKey": ""
-        },
-        "constraints": {
-          "required": true
-        },
-        "options": {
-          "hideConfirmation": false
-        },
-        "osPlatform": "Linux"
-      }
+        }
     ],
     "steps": [
       {
