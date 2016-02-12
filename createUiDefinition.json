@@ -26,15 +26,25 @@
                   }
       },
       {
-                "name": "sshPublicKey",
-                "type": "Microsoft.Common.TextBox",
-                "label": "SSH public key",
-                "toolTip": "OpenSSH public key can be generated with tools like ssh-keygen on Linux or OS X and will look like 'ssh-rsa AAAAB3...'",
-                "constraints": {
-                    "required": true,
-                    "validationMessage": "Valid SSH Public Key is required"
-                  }
-        }
+        "name": "sshPublicKey",
+        "type": "Microsoft.Compute.CredentialsCombo",
+        "label": {
+            "authenticationType": "Authentication type",
+            "sshPublicKey": "SSH public key"
+        },
+        "toolTip": {
+            "authenticationType": "",
+            "sshPublicKey": "OpenSSH public key can be generated with tools like ssh-keygen on Linux or OS X and will look like 'ssh-rsa AAAAB3...'"
+        },
+        "constraints": {
+            "required": true
+        },
+        "options": {
+            "hideConfirmation": false,
+            "hidePassword": true
+        },
+        "osPlatform": "Linux"
+      }
     ],
     "steps": [
       {
@@ -76,7 +86,7 @@
                             },
                             "constraints": {
                             "minAddressPrefixSize": "/24",
-                             "minAddressCount": 1,
+                            "minAddressCount": 1,
                             "requireContiguousAddresses": false
                             }
                         }
@@ -195,7 +205,7 @@
     "outputs": {
       "vmName": "[basics('VMName')]",
       "adminUsername": "[basics('adminUsername')]",
-      "sshKeyData": "[basics('sshPublicKey')]",
+      "sshKeyData": "[basics('sshPublicKey').sshPublicKey]",
       "adminPassword": "[basics('passwordElement')]",
       "virtualNetworkName": "[steps('StorageNetworkConfig').virtualNetwork.name]",
       "addressPrefix": "[steps('StorageNetworkConfig').virtualNetwork.addressPrefix]",
